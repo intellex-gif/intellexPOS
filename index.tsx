@@ -176,6 +176,7 @@ const GeminiService = {
 
 // --- COMPONENTS ---
 
+// 1. Dashboard Component
 const Dashboard: React.FC<{ products: Product[], transactions: Transaction[] }> = ({ products, transactions }) => {
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
@@ -312,6 +313,7 @@ const Dashboard: React.FC<{ products: Product[], transactions: Transaction[] }> 
   );
 };
 
+// 2. Register Component
 const Register: React.FC<{ products: Product[], onCompleteTransaction: (transaction: Transaction) => void }> = ({ products, onCompleteTransaction }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -541,6 +543,7 @@ const Register: React.FC<{ products: Product[], onCompleteTransaction: (transact
   );
 };
 
+// 3. Inventory Component
 const Inventory: React.FC<{ products: Product[], onAddProduct: (p: Product) => void, onUpdateProduct: (p: Product) => void, onDeleteProduct: (id: string) => void }> = ({ products, onAddProduct, onUpdateProduct, onDeleteProduct }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
@@ -640,6 +643,7 @@ const Inventory: React.FC<{ products: Product[], onAddProduct: (p: Product) => v
   );
 };
 
+// 4. Sales History Component
 const SalesHistory: React.FC<{ transactions: Transaction[] }> = ({ transactions }) => {
   return (
     <div className="space-y-6 animate-fade-in">
@@ -672,7 +676,7 @@ const SalesHistory: React.FC<{ transactions: Transaction[] }> = ({ transactions 
   );
 };
 
-// --- APP ---
+// --- MAIN APP COMPONENT ---
 
 const App: React.FC = () => {
   const [activePage, setActivePage] = useState<Page>(Page.DASHBOARD);
@@ -756,7 +760,11 @@ if (rootElement) {
     root.render(<React.StrictMode><App /></React.StrictMode>);
   } catch (e) {
     console.error("Render failed", e);
-    document.body.innerHTML = `<h1>Fatal Error during Render</h1><pre>${e}</pre>`;
+    const overlay = document.getElementById('error-overlay');
+    if (overlay) {
+       overlay.style.display = 'block';
+       overlay.innerHTML = `<h1>CRITICAL RENDER ERROR</h1><pre>${e}</pre>`;
+    }
   }
 } else {
   console.error("Root element not found");
