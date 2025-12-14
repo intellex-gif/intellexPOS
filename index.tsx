@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
+console.log("RetailPulse POS starting...");
+
 // --- TYPES ---
 export interface Product {
   id: string;
@@ -16,7 +18,7 @@ export interface Product {
   price: number;
   category: string;
   stock: number;
-  expiryDate?: string; // ISO date string YYYY-MM-DD
+  expiryDate?: string; 
   imageUrl?: string;
 }
 
@@ -26,7 +28,7 @@ export interface CartItem extends Product {
 
 export interface Transaction {
   id: string;
-  date: string; // ISO timestamp
+  date: string; 
   items: CartItem[];
   subtotal: number;
   tax: number;
@@ -58,8 +60,13 @@ const INITIAL_PRODUCTS: Product[] = [
 
 const StorageService = {
   getProducts: (): Product[] => {
-    const data = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
-    return data ? JSON.parse(data) : INITIAL_PRODUCTS;
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+      return data ? JSON.parse(data) : INITIAL_PRODUCTS;
+    } catch (e) {
+      console.error("Storage error", e);
+      return INITIAL_PRODUCTS;
+    }
   },
 
   saveProducts: (products: Product[]) => {
@@ -67,8 +74,12 @@ const StorageService = {
   },
 
   getTransactions: (): Transaction[] => {
-    const data = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-    return data ? JSON.parse(data) : [];
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
   },
 
   saveTransaction: (transaction: Transaction) => {
@@ -91,7 +102,7 @@ const StorageService = {
   }
 };
 
-const GEMINI_API_KEY = process.env.API_KEY || '';
+const GEMINI_API_KEY = (window.process?.env?.API_KEY) || '';
 
 const GeminiService = {
   analyzeBusiness: async (products: Product[], transactions: Transaction[]) => {
@@ -728,4 +739,6 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(<React.StrictMode><App /></React.StrictMode>);
+} else {
+  console.error("Root element not found");
 }
