@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Page, Product, Transaction } from './types';
-import { StorageService } from './services/storageService';
-import { Dashboard } from './components/Dashboard';
-import { Register } from './components/Register';
-import { Inventory } from './components/Inventory';
-import { SalesHistory } from './components/SalesHistory';
+import { Page, Product, Transaction } from './types.ts';
+import { StorageService } from './services/storageService.ts';
+import { Dashboard } from './components/Dashboard.tsx';
+import { Register } from './components/Register.tsx';
+import { Inventory } from './components/Inventory.tsx';
+import { SalesHistory } from './components/SalesHistory.tsx';
 import { LayoutDashboard, ShoppingCart, Package, History, Store } from 'lucide-react';
 
 const App: React.FC = () => {

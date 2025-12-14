@@ -1,4 +1,4 @@
-import { Product, Transaction } from '../types';
+import { Product, Transaction } from '../types.ts';
 
 const STORAGE_KEYS = {
   PRODUCTS: 'retailpulse_products',

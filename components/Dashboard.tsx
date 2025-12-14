@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Product, Transaction } from '../types';
-import { GeminiService } from '../services/geminiService';
+import { Product, Transaction } from '../types.ts';
+import { GeminiService } from '../services/geminiService.ts';
 import { DollarSign, ShoppingBag, AlertTriangle, Activity, Sparkles, RefreshCcw } from 'lucide-react';
 
 interface DashboardProps {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Product } from '../types';
-import { GeminiService } from '../services/geminiService';
+import { Product } from '../types.ts';
+import { GeminiService } from '../services/geminiService.ts';
 import { Plus, Edit, Trash, Save, X, Sparkles, AlertCircle } from 'lucide-react';
 
 interface InventoryProps {

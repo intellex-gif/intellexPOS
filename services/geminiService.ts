@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { Product, Transaction } from "../types";
+import { Product, Transaction } from "../types.ts";
 
 const GEMINI_API_KEY = process.env.API_KEY || '';
 

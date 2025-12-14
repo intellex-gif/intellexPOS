@@ -1,5 +1,5 @@
 import React from 'react';
-import { Transaction } from '../types';
+import { Transaction } from '../types.ts';
 import { Clock, CreditCard, Banknote, Smartphone } from 'lucide-react';
 
 export const SalesHistory: React.FC<{ transactions: Transaction[] }> = ({ transactions }) => {

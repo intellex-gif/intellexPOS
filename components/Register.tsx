@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Product, CartItem, Transaction } from '../types';
+import { Product, CartItem, Transaction } from '../types.ts';
 import { Search, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, CheckCircle, ShoppingBag } from 'lucide-react';
 
 interface RegisterProps {
