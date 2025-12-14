@@ -8,7 +8,17 @@ import {
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
-console.log("RetailPulse POS starting...");
+// --- UTILS ---
+// Polyfill for randomUUID if not available in insecure contexts
+const generateUUID = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
 
 // --- TYPES ---
 export interface Product {
@@ -102,15 +112,18 @@ const StorageService = {
   }
 };
 
-const GEMINI_API_KEY = (window.process?.env?.API_KEY) || '';
+const getGeminiApiKey = () => {
+  return (window as any).process?.env?.API_KEY || '';
+};
 
 const GeminiService = {
   analyzeBusiness: async (products: Product[], transactions: Transaction[]) => {
-    if (!GEMINI_API_KEY) {
+    const apiKey = getGeminiApiKey();
+    if (!apiKey) {
       throw new Error("API Key is missing.");
     }
 
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const ai = new GoogleGenAI({ apiKey });
     
     const lowStock = products.filter(p => p.stock < 10).map(p => p.name);
     const expired = products.filter(p => p.expiryDate && new Date(p.expiryDate) < new Date()).map(p => p.name);
@@ -143,9 +156,10 @@ const GeminiService = {
   },
 
   generateProductDescription: async (name: string, category: string) => {
-    if (!GEMINI_API_KEY) return "AI description unavailable (Missing API Key).";
+    const apiKey = getGeminiApiKey();
+    if (!apiKey) return "AI description unavailable (Missing API Key).";
     
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const ai = new GoogleGenAI({ apiKey });
     const prompt = `Write a short, catchy 1-sentence product description for a retail point of sale display. Product: "${name}", Category: "${category}".`;
 
     try {
@@ -359,7 +373,7 @@ const Register: React.FC<{ products: Product[], onCompleteTransaction: (transact
 
   const handleCheckout = (method: 'cash' | 'card' | 'digital') => {
     const transaction: Transaction = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       date: new Date().toISOString(),
       items: [...cart],
       subtotal,
@@ -533,7 +547,7 @@ const Inventory: React.FC<{ products: Product[], onAddProduct: (p: Product) => v
   const [aiLoading, setAiLoading] = useState(false);
 
   const startAdd = () => {
-    setCurrentProduct({ id: crypto.randomUUID(), sku: '', name: '', price: 0, stock: 0, category: 'General', expiryDate: '' });
+    setCurrentProduct({ id: generateUUID(), sku: '', name: '', price: 0, stock: 0, category: 'General', expiryDate: '' });
     setIsEditing(true);
   };
 
@@ -737,8 +751,13 @@ const App: React.FC = () => {
 // --- RENDER ---
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(<React.StrictMode><App /></React.StrictMode>);
+  try {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<React.StrictMode><App /></React.StrictMode>);
+  } catch (e) {
+    console.error("Render failed", e);
+    document.body.innerHTML = `<h1>Fatal Error during Render</h1><pre>${e}</pre>`;
+  }
 } else {
   console.error("Root element not found");
 }

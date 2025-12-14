@@ -36,6 +36,17 @@
       .animate-fade-in {
         animation: fadeIn 0.4s ease-out forwards;
       }
+      
+      #error-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: white;
+        color: red;
+        z-index: 9999;
+        padding: 2rem;
+        font-family: monospace;
+      }
     </style>
   <script type="importmap">
 {
@@ -52,10 +63,24 @@
 </head>
   <body class="bg-gray-50 text-slate-900 antialiased">
     <div id="root"></div>
+    <div id="error-overlay"></div>
     
     <!-- Polyfill for process.env -->
     <script>
       window.process = { env: { API_KEY: '' } };
+      
+      // Global Error Handler to catch Blank Screen issues
+      window.onerror = function(msg, url, line, col, error) {
+        const overlay = document.getElementById('error-overlay');
+        overlay.style.display = 'block';
+        overlay.innerHTML = `
+          <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">Application Error</h1>
+          <p><strong>Message:</strong> ${msg}</p>
+          <p><strong>Location:</strong> ${url}:${line}:${col}</p>
+          <pre style="background: #eee; padding: 10px; margin-top: 10px; border-radius: 4px;">${error?.stack || 'No stack trace'}</pre>
+        `;
+        return false;
+      };
     </script>
 
     <!-- Main Application Entry Point -->
